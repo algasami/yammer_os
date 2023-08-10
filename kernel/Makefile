@@ -1,6 +1,5 @@
-#!/bin/sh
 DEFAULT_HOST!=../default-host.sh
-HOST?=DEFAULT_HOST
+HOST?=${DEFAULT_HOST}
 HOSTARCH!=../target-to-arch.sh ${HOST}
 
 CFLAGS?=-O2 -g
@@ -17,7 +16,7 @@ INCLUDEDIR?=${PREFIX}/include
 CFLAGS:=${CFLAGS} -ffreestanding -Wall -Wextra
 CPPFLAGS:=${CPPFLAGS} -D__is_kernel -Iinclude
 LDFLAGS:=${LDFlAGS}
-LIBS:=${LIBS} -nostdlib -lgcc
+LIBS:=${LIBS} -nostdlib -lk -lgcc
 
 ARCHDIR=arch/${HOSTARCH}
 
@@ -61,7 +60,7 @@ LINK_LIST=\
 all: myos.kernel
 
 myos.kernel: ${OBJS} ${ARCHDIR}/linker.ld
-	${CC} -T ${ARCHDIR}/linker.ld -o $@ ${CFLAGS} ${LINK_LIST}
+	${CC} ${CC_ARGS} -T ${ARCHDIR}/linker.ld -o $@ ${CFLAGS} ${LINK_LIST}
 	@if grub-file --is-x86-multiboot myos.kernel; then\
 		echo multiboot confirmed;\
 	else\
@@ -69,13 +68,13 @@ myos.kernel: ${OBJS} ${ARCHDIR}/linker.ld
 	fi
 
 ${ARCHDIR}/crtbegin.o ${ARCHDIR}/crtend.o:
-	OBJ=`${CC} ${CFLAGS} ${LDFLAGS} -print-file-name=${@F}` && cp "$$OBJ" $@
+	OBJ=`${CC} ${CC_ARGS} ${CFLAGS} ${LDFLAGS} -print-file-name=${@F}` && cp "$$OBJ" $@
 
 .c.o:
-	${CC} -MD -c $< -o $@ -std=gnu11 ${CFLAGS} ${CPPFLAGS}
+	${CC} ${CC_ARGS} -MD -c $< -o $@ -std=gnu11 ${CFLAGS} ${CPPFLAGS}
 
 .s.o:
-	${CC} -MD -c $< -o $@ ${CFLAGS} ${CPPFLAGS}
+	${CC} ${CC_ARGS} -MD -c $< -o $@ ${CFLAGS} ${CPPFLAGS}
 
 clean:
 	rm -f myos.kernel
@@ -86,7 +85,7 @@ install: install-headers install-kernel
 
 install-headers:
 	mkdir -p ${DESTDIR}${INCLUDEDIR}
-	cp -R --preserve=timestamps include/. ${DESTDIR}${INCLUDEDIR}/.
+	cp -R -p include/. ${DESTDIR}${INCLUDEDIR}/.
 
 install-kernel: myos.kernel
 	mkdir -p ${DESTDIR}${BOOTDIR}

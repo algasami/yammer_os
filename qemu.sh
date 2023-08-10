@@ -1,6 +1,5 @@
-#!/bin/sh
-set -e
-. ./iso.sh
+echo "[qemu.sh] starting to build qemu";
 
-qemu-system-i386 -cdrom myos.iso
+. ./config.sh
 
+bear -- make qemu

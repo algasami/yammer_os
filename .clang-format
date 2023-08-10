@@ -1,0 +1,4 @@
+BasedOnStyle: microsoft
+IndentWidth: 4
+UseTab: Never
+TabWidth: 4
