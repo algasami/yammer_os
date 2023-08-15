@@ -1,3 +1,7 @@
+.ccls-cache
 opt
 tmp
+sysroot
+/*/**/*.d
+/*/**/*.o
 /*/**/compile_commands.json
