@@ -1,7 +1,11 @@
 .ccls-cache
+isodir
 opt
 tmp
 sysroot
 /*/**/*.d
+/*/**/*.kernel
+/*/**/*.a
+*.iso
 /*/**/*.o
 /*/**/compile_commands.json
